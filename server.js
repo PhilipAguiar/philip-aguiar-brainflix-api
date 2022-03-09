@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
 
-app.get("/", (req, res) => {
-  res.send("test");
-});
+const routes = require("./routes/videos")
+
+app.use("/videos", routes)
 
 app.listen(8080, () => {
   console.log("server test");
