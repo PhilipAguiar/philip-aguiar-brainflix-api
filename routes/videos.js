@@ -9,4 +9,12 @@ router.get("/:id", (req, res) => {
   res.send("test id");
 });
 
+router.put("/:id", (req, res) => {
+  res.send("test id");
+});
+
+router.delete("/:id", (req, res) => {
+  res.send("test id");
+});
+
 module.exports = router

@@ -1,10 +1,13 @@
 const express = require("express");
 const app = express();
+const routes = require("./routes/videos");
+const cors = require("cors");
 
-const routes = require("./routes/videos")
+app.use(cors());
 
-app.use("/videos", routes)
+
+app.use("/videos", routes);
 
 app.listen(8080, () => {
-  console.log("server test");
+  console.log("server test 8080");
 });
