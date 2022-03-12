@@ -35,7 +35,7 @@ router
     if (!image) {
       let defaultImage = fs.createReadStream("./public/images/Upload-video-preview.jpg");
       let newImage = fs.createWriteStream(`./public/images/${newId}.jpeg`);
-      defaultImage.pipe(newImage)
+      defaultImage.pipe(newImage);
     }
     videos.push({
       id: newId,
@@ -44,6 +44,7 @@ router
       image: `http://localhost:8080/images/${newId}.jpeg`,
       description: req.body.description,
       views: 0,
+      likes: 0,
       duration: "3:00",
       video: "https://project-2-api.herokuapp.com/stream",
       timestamp: currentDate.getTime(),
