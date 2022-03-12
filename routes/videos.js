@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 
 router.use(express.json());
 
+
 const getVideos = () => {
   const videos = fs.readFileSync("./data/videos.json");
   return JSON.parse(videos);
@@ -16,6 +17,7 @@ const saveVideos = (videos) => {
 
 router.get("/", (req, res) => {
   let formattedVideos = getVideos().map((video) => {
+
     return {
       id: video.id,
       title: video.title,
