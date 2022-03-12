@@ -33,15 +33,13 @@ router
     const currentDate = new Date();
     let image = req.body.image;
     if (!image) {
-      let defaultImage = fs.createReadStream("./public/images/Upload-video-preview.jpg");
-      let newImage = fs.createWriteStream(`./public/images/${newId}.jpeg`);
-      defaultImage.pipe(newImage);
+      image = "http://localhost:8080/images/DefaultImage.jpeg"
     }
     videos.push({
       id: newId,
       title: req.body.title,
       channel: "BrainStation Man",
-      image: `http://localhost:8080/images/${newId}.jpeg`,
+      image: image,
       description: req.body.description,
       views: 0,
       likes: 0,
