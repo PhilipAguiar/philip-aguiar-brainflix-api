@@ -5,7 +5,6 @@ const { v4: uuidv4 } = require("uuid");
 
 router.use(express.json());
 
-
 const getVideos = () => {
   const videos = fs.readFileSync("./data/videos.json");
   return JSON.parse(videos);
@@ -15,18 +14,44 @@ const saveVideos = (videos) => {
   fs.writeFileSync("./data/videos.json", JSON.stringify(videos));
 };
 
-router.get("/", (req, res) => {
-  let formattedVideos = getVideos().map((video) => {
-
-    return {
-      id: video.id,
-      title: video.title,
-      channel: video.channel,
-      image: video.image,
-    };
+router
+  .route("/")
+  .get((req, res) => {
+    let formattedVideos = getVideos().map((video) => {
+      return {
+        id: video.id,
+        title: video.title,
+        channel: video.channel,
+        image: video.image,
+      };
+    });
+    res.status(200).json(formattedVideos);
+  })
+  .post((req, res) => {
+    let videos = getVideos();
+    let newId = uuidv4();
+    const currentDate = new Date();
+    let image = req.body.image;
+    if (!image) {
+      let defaultImage = fs.createReadStream("./public/images/Upload-video-preview.jpg");
+      let newImage = fs.createWriteStream(`./public/images/${newId}.jpeg`);
+      defaultImage.pipe(newImage)
+    }
+    videos.push({
+      id: newId,
+      title: req.body.title,
+      channel: "BrainStation Man",
+      image: `http://localhost:8080/images/${newId}.jpeg`,
+      description: req.body.description,
+      views: 0,
+      duration: "3:00",
+      video: "https://project-2-api.herokuapp.com/stream",
+      timestamp: currentDate.getTime(),
+      comments: [],
+    });
+    saveVideos(videos);
+    res.status(200).json(videos);
   });
-  res.status(200).json(formattedVideos);
-});
 
 router.get("/:id", (req, res) => {
   const individualVideo = getVideos().find((video) => video.id === req.params.id);
@@ -47,7 +72,7 @@ router.post("/:id/comments", (req, res) => {
 
   let newVideo = videos.find((video) => video.id === req.params.id);
   // id: uuidv4(),
-    newVideo.comments.push({
+  newVideo.comments.push({
     id: uuidv4(),
     name: req.body.name,
     comment: req.body.comment,
@@ -55,14 +80,13 @@ router.post("/:id/comments", (req, res) => {
     timestamp: currentDate.getTime(),
   });
 
-  let newVideoList = (videos.map((video)=>{
-    if(video.id === req.params.id){
-      
-      return newVideo
+  let newVideoList = videos.map((video) => {
+    if (video.id === req.params.id) {
+      return newVideo;
     }
-  
-    return video
-  }))
+
+    return video;
+  });
   saveVideos(newVideoList);
   res.status(200).json(newVideoList);
 });
@@ -78,7 +102,6 @@ router.delete("/:id/comments/:commentId", (req, res) => {
     video.comments = newComments;
     return video;
   });
-  console.log(newVideos);
   saveVideos(newVideos);
   res.status(200).json(newVideos);
 });
