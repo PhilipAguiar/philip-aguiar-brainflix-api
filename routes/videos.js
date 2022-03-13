@@ -33,21 +33,23 @@ router
     const currentDate = new Date();
     let image = req.body.image;
     if (!image) {
-      image = "http://localhost:8080/images/DefaultImage.jpeg"
+      image = "http://localhost:8080/images/DefaultImage.jpeg";
     }
+
     videos.push({
       id: newId,
       title: req.body.title,
       channel: "BrainStation Man",
       image: image,
       description: req.body.description,
-      views: 0,
-      likes: 0,
+      views: "0",
+      likes: "0",
       duration: "3:00",
       video: "https://project-2-api.herokuapp.com/stream",
       timestamp: currentDate.getTime(),
       comments: [],
     });
+
     saveVideos(videos);
     res.status(200).json(videos);
   });
@@ -70,12 +72,12 @@ router.post("/:id/comments", (req, res) => {
   const currentDate = new Date();
 
   let newVideo = videos.find((video) => video.id === req.params.id);
-  // id: uuidv4(),
+
   newVideo.comments.push({
     id: uuidv4(),
     name: req.body.name,
     comment: req.body.comment,
-    likes: 0,
+    likes: "0",
     timestamp: currentDate.getTime(),
   });
 
@@ -83,9 +85,9 @@ router.post("/:id/comments", (req, res) => {
     if (video.id === req.params.id) {
       return newVideo;
     }
-
     return video;
   });
+
   saveVideos(newVideoList);
   res.status(200).json(newVideoList);
 });
@@ -103,6 +105,27 @@ router.delete("/:id/comments/:commentId", (req, res) => {
   });
   saveVideos(newVideos);
   res.status(200).json(newVideos);
+});
+
+router.route("/:id/likes").put((req, res) => {
+  let internationalNumberFormat = new Intl.NumberFormat("en-US");
+  let videos = getVideos();
+
+  let newVideo = videos.find((video) => video.id === req.params.id);
+  let likesInt = parseInt(newVideo.likes.replace(",", ""));
+  likesInt++;
+  let newLikesCount = internationalNumberFormat.format(likesInt);
+
+  let newVideoList = videos.map((video) => {
+    if (video.id === req.params.id) {
+      newVideo.likes = newLikesCount;
+      return newVideo;
+    }
+    return video;
+  });
+  saveVideos(newVideoList);
+  res.status(200).json(newVideo);
+
 });
 
 module.exports = router;
